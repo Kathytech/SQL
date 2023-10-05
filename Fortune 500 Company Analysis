@@ -105,12 +105,13 @@ GROUP BY industry
 ORDER BY total_revenue_in_billions desc;
 
 /*Assign all companies with a rating based on their PTO.*/
+/*Works #7 (Business PTO rating)*/
 SELECT company_name,
 CASE 
 WHEN paid_time_off_days>=20 THEN "generous"
 WHEN paid_time_off_days <=15 THEN "insufficient"
 ELSE "adequate"
-END AS "PTO_rating"
+END AS "PTO_rating";
 
 /*Which financial company has the highest revenue?*/
 SELECT MAX(revenue) AS "highest_revenue", company_name
