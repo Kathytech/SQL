@@ -1,0 +1,135 @@
+/*This is an analysis of the 15 most recent books in my audible app.
+Table 1 includes: id, title, and author.
+Table 2 includes: id, genre.
+Table 3 includes: id, book length in minutes.
+Table 4 includes: id, book progress*/
+
+
+CREATE TABLE recent_books (id INTEGER PRIMARY KEY, title TEXT, author TEXT);
+
+INSERT INTO recent_books VALUES (1, "Head On", "John Scalzi");
+INSERT INTO recent_books VALUES (2, "The Vanished Birds", "Simon Jimenez");
+INSERT INTO recent_books VALUES (3, "Terminus", "Peter Clines");
+INSERT INTO recent_books VALUES (4, "Starter Villain", "John Scalzi");
+INSERT INTO recent_books VALUES (5, "$100M Offers", "Alex Hormozi");
+INSERT INTO recent_books VALUES (6, "Counting the Cost", "Jill Duggar");
+INSERT INTO recent_books VALUES (7, "Blue Remembered Earth", "Alastair Reynolds");
+INSERT INTO recent_books VALUES (8, "The Last Emperox", "John Scalzi");
+INSERT INTO recent_books VALUES (9, "Take Your Own Advice", "Jeffrey Marsh");
+INSERT INTO recent_books VALUES (10, "The Consuming Fire", "John Scalzi");
+INSERT INTO recent_books VALUES (11, "The Martian", "Andy Weir");
+INSERT INTO recent_books VALUES (12, "The Kaiju Preservation Society", "John Scalzi");
+INSERT INTO recent_books VALUES (13, "The Collapsing Empire", "John Scalzi");
+INSERT INTO recent_books VALUES (14, "Hey, Hun", "Emily Lynn Paulson");
+INSERT INTO recent_books VALUES (15, "Lords of Uncreation", "Adrian Tchaikovsky");
+
+
+CREATE TABLE book_genre (id INTEGER PRIMARY KEY, genre TEXT);
+
+INSERT INTO book_genre VALUES (1, "sci-fi");
+INSERT INTO book_genre VALUES (2, "sci-fi");
+INSERT INTO book_genre VALUES (3, "sci-fi");
+INSERT INTO book_genre VALUES (4, "sci-fi");
+INSERT INTO book_genre VALUES (5, "business");
+INSERT INTO book_genre VALUES (6, "memoir");
+INSERT INTO book_genre VALUES (7, "sci-fi");
+INSERT INTO book_genre VALUES (8, "sci-fi");
+INSERT INTO book_genre VALUES (9, "self-help");
+INSERT INTO book_genre VALUES (10, "sci-fi");
+INSERT INTO book_genre VALUES (11, "sci-fi");
+INSERT INTO book_genre VALUES (12, "sci-fi");
+INSERT INTO book_genre VALUES (13, "sci-fi");
+INSERT INTO book_genre VALUES (14, "memoir");
+INSERT INTO book_genre VALUES (15, "sci-fi");
+
+
+CREATE TABLE book_length (id INTEGER PRIMARY KEY, length_in_minutes INTEGER);
+
+INSERT INTO book_length VALUES (1, 456);
+INSERT INTO book_length VALUES (2, 797);
+INSERT INTO book_length VALUES (3, 681);
+INSERT INTO book_length VALUES (4, 485);
+INSERT INTO book_length VALUES (5, 228);
+INSERT INTO book_length VALUES (6, 427);
+INSERT INTO book_length VALUES (7, 1305);
+INSERT INTO book_length VALUES (8, 487);
+INSERT INTO book_length VALUES (9, 439);
+INSERT INTO book_length VALUES (10, 499);
+INSERT INTO book_length VALUES (11, 659);
+INSERT INTO book_length VALUES (12, 482);
+INSERT INTO book_length VALUES (13, 564);
+INSERT INTO book_length VALUES (14, 657);
+INSERT INTO book_length VALUES (15, 1250);
+
+
+CREATE TABLE book_progress (id INTEGER PRIMARY KEY, progress TEXT);
+
+INSERT INTO book_progress VALUES (1, "in progress");
+INSERT INTO book_progress VALUES (2, "not started");
+INSERT INTO book_progress VALUES (3, "not started");
+INSERT INTO book_progress VALUES (4, "finished");
+INSERT INTO book_progress VALUES (5, "in progress");
+INSERT INTO book_progress VALUES (6, "finished");
+INSERT INTO book_progress VALUES (7, "finished");
+INSERT INTO book_progress VALUES (8, "finished");
+INSERT INTO book_progress VALUES (9, "finished");
+INSERT INTO book_progress VALUES (10, "finished");
+INSERT INTO book_progress VALUES (11, "finished");
+INSERT INTO book_progress VALUES (12, "finished");
+INSERT INTO book_progress VALUES (13, "finished");
+INSERT INTO book_progress VALUES (14, "finished");
+INSERT INTO book_progress VALUES (15, "finished");
+
+/*Analysis*/
+
+/*Questions:
+1. How many books are in each genre?
+2. What is the progress level of each book? (also lists genre)
+3. What is the average length by genre?
+4. What is the longest book and which genre is it?
+5. What is the shortest book and which genre is it?
+6. How many books by each author are in my recent audible books?*/
+
+/*Question #1: How many books are in each genre?*/
+SELECT genre, COUNT (genre) AS total_count
+FROM book_genre
+GROUP BY genre;
+
+
+/*Question #2: What is the progress level of each book? (also lists genre)*/
+SELECT recent_books.title, book_genre.genre, book_progress.progress
+FROM book_genre
+JOIN book_progress
+ON book_progress.id=book_genre.id
+JOIN recent_books
+ON recent_books.id=book_genre.id;
+
+
+/*Question #3: What is the average length by genre?*/
+SELECT book_genre.genre, ROUND(AVG (book_length.length_in_minutes)) AS average_length_in_minutes
+FROM book_length
+JOIN book_genre
+ON book_length.id=book_genre.id
+GROUP BY book_genre.genre;
+
+/*Question #4: What is the longest book and which genre is it?*/
+SELECT recent_books.title AS longest_book, book_genre.genre, MAX(book_length.length_in_minutes) As book_length
+FROM book_genre
+JOIN book_length
+ON book_genre.id=book_length.id
+JOIN recent_books
+ON recent_books.id=book_genre.id;
+
+/*Question #5: What is the shortest book and which genre is it?*/
+SELECT recent_books.title AS shortest_book, book_genre.genre, MIN(book_length.length_in_minutes) As book_length
+FROM book_genre
+JOIN book_length
+ON book_genre.id=book_length.id
+JOIN recent_books
+ON recent_books.id=book_genre.id;
+
+/*Question 6: How many books by each author are in my recent audible books?*/
+SELECT author, COUNT (author) AS total_count
+FROM recent_books
+GROUP BY author
+ORDER BY total_count desc;
